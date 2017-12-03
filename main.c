@@ -19,6 +19,15 @@ typedef struct {
     int is_question;
 } cell;
 
+void isValid(int cols,int rows){
+   while(cols <=0 || rows <=0) //cols & rows validation >>positive numbers only<<<
+   {
+       printf("Invalid!\n");
+       printf("Enter cols & rows:\n");
+       scanf("%d %d", &cols, &rows);
+   }
+}
+
 int board_created = 0, lost = 0, win = 0, first_move = 1, moves = 0, flags = 0, questions = 0, mines = 0;
 
 int main()
@@ -27,8 +36,9 @@ int main()
 
     int rows, cols, x, y, x_mv, y_mv;
     char action;
-    printf("Enter: cols rows \n");
+    printf("Enter cols & rows:\n");
     scanf("%d %d", &cols, &rows);
+    isValid(cols,rows);
     cell cells[cols][rows];
 
     for(y=0; y<rows; y++) {
