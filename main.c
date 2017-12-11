@@ -28,6 +28,26 @@ void isValid(int cols,int rows){
    }
 }
 
+void play_again()
+{
+    char ans;
+
+    printf("\n\nWould you like to play again? (y/n) ");
+    scanf(" %c", &ans);
+
+    if(toupper(ans) == 'Y') //converts lowercase letter to uppercase letter
+    {
+        system("cls");
+        //start game
+    }
+
+    else
+    {
+        printf("\n\nThanks for playing!");
+        (void) getchar();
+        exit(EXIT_SUCCESS);
+    }
+
 int board_created = 0, lost = 0, win = 0, first_move = 1, moves = 0, flags = 0, questions = 0, mines = 0;
 
 int main()
@@ -80,6 +100,7 @@ int main()
         }
 
     }
+    play_again();
     return 0;
 }
 
