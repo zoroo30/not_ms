@@ -1,0 +1,81 @@
+#include<strings.h>
+#include<conio.h>
+#include<time.h>
+void delay(clock_t a)
+{
+    clock_t start;
+    start  = clock();
+    while(clock()-start<a)
+    {
+
+    }
+}
+
+int main()
+{
+    int i;
+    char str[30]="Welcome To Minesweeper !";
+    char str1[30]="Are You Ready To Play ?";
+    char ch;
+    char tempstr[10];
+
+    for(i=0;i<10;i++)
+    {
+        printf("\n");
+    }
+    for(i=0;i<30;i++)
+    {
+        printf(" ");
+    }
+    for(i=0;str[i]!='\0';i++)
+    {
+        printf("%c",str[i]);
+        delay(60);
+    }
+    printf("\n");
+    for(i=0;i<30;i++)
+    {
+        printf(" ");
+    }
+    for(i=0;str1[i]!='\0';i++)
+    {
+        printf("%c",str1[i]);
+        delay(60);
+    }
+    delay(1500);
+    system("cls");
+
+    for(;;)
+    {
+        system("cls");
+        for(i=0;i<10;i++)
+            printf("\n");
+        for(i=0;i<30;i++)
+            printf(" ");
+        printf("1.Start a new game \n");
+        ///play game function
+        for(i=0;i<30;i++)
+            printf(" ");
+    printf("2.Show Leaderboard"); 
+    //display scores
+    printf("\n");
+        for(i=0;i<30;i++)
+            printf(" ");
+        printf("3.Load Game\n");//open saved file
+        ch=getch();
+        if(ch==49)
+            break;
+        if(ch==50)
+        {
+            system("cls");
+            printf("OK!\n");
+            printf("\nPress Enter To Get Back");
+            fflush(stdin);//enter button
+            gets(tempstr);
+            continue;
+        }
+    }
+    system("cls");
+
+    return 0;
+}
