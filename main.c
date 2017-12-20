@@ -1,6 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+#include<stdio.h>
+#include<strings.h>
+#include<conio.h>
+#include<time.h>
 #include <windows.h>
 
 //   background   color
@@ -10,6 +11,16 @@
 //F9 white and blue
 
 // if you opened an open cell with right number of flags then another cell opened with the right number of flags it opens the 2nd cell surrounding cells too
+
+void delay(clock_t a)
+{
+    clock_t start;
+    start  = clock();
+    while(clock()-start<a)
+    {
+
+    }
+}
 
 typedef struct {
     int value;
@@ -21,13 +32,67 @@ typedef struct {
 
 int board_created = 0, lost = 0, win = 0, first_move = 1, moves = 0, current_left_cells = 0, flags = 0, questions = 0, mines = 0;
 
+
 int main()
 {
-    srand(time(NULL));
-
+    int i;
+    char str[30]="Welcome To Minesweeper !";
+    char str1[30]="Are You Ready To Play ?";
+    char ch;
+    char tempstr[10];
+    printf(" ");
+    for(i=0;str[i]!='\0';i++)
+    {
+        printf("%c",str[i]);
+        delay(60);
+    }
+    printf("\n");
+    printf(" ");
+    for(i=0;str1[i]!='\0';i++)
+    {
+        printf("%c",str1[i]);
+        delay(60);
+    }
+    delay(1500);
+    system("cls");
+    for(;;)
+    {
+        system("cls");
+        printf("(1)Start a new game ");
+        printf("\n");
+        printf("(2)Show Leaderboard"); //display scores
+        printf("\n");
+        printf("(3)Load Game\n");//open saved file
+        ch=getch();
+        if(ch==49)
+            {
+                system("cls");
+              char ch1;
+              SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 0x08);
+              printf("Choose difficulty:\n");
+              SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 0x03);
+              printf("(1)Easy(3x3)\n");
+              SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 0x05);
+              printf("(2)Medium(6x6)\n");
+              SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 0x04);
+              printf("(3)Hard(9x9)\n");
+              SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 0x09);
+              printf("(4)Custom(mxn)\n");
+              SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 0x07);
+              ch1=getch();
+              if(ch1==49);
+              //cols=3,,rows=3
+              if(ch1==50);
+                //cols=6,,rows=6
+              if(ch1==51);
+                  //cols=9,,rows=9
+               if(ch1==52)
+              {
+                  system("cls");
+                srand(time(NULL));
     int rows, cols, x, y, x_mv, y_mv;
     char action;
-    printf("Enter: cols rows \n");
+    printf("Enter cols & rows:\n");
     scanf("%d %d", &cols, &rows);
     cell cells[cols][rows];
 
@@ -74,10 +139,34 @@ int main()
 
 
     }
+              }
+            }
+            if(ch==50)
+        {
+            system("cls");
+            printf("  PLAYER\t\tSCORE\n");
+            printf("\nTo return to main menu press (enter)");
+            fflush(stdin);
+            gets(tempstr);
+            continue;
+        }
+        if(ch==51)
+    {
+        system("cls");
+        printf("Ok!");
+        printf("\nTo return to main menu press (enter)");
+        fflush(stdin);
+        gets(tempstr);
+        continue;
+    }
+
+    }
     return 0;
 }
 
-void create_board(int x, int y, int rows, int cols, cell* cells)
+
+
+    void create_board(int x, int y, int rows, int cols, cell* cells)
 {
     int rnd_x, rnd_y, i, j;
     while(mines != 0)
@@ -287,3 +376,4 @@ void clrscr()
 {
     system("@cls||clear");
 }
+
