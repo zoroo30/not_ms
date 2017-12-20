@@ -19,7 +19,7 @@ typedef struct {
     int is_question;
 } cell;
 
-int board_created = 0, lost = 0, win = 0, first_move = 1, moves = 0, flags = 0, questions = 0, mines = 0;
+int board_created = 0, lost = 0, win = 0, first_move = 1, moves = 0, current_left_cells = 0, flags = 0, questions = 0, mines = 0;
 
 int main()
 {
@@ -30,6 +30,8 @@ int main()
     printf("Enter: cols rows \n");
     scanf("%d %d", &cols, &rows);
     cell cells[cols][rows];
+
+    current_left_cells = cols*rows;
 
     for(y=0; y<rows; y++) {
         for(x=0; x<cols; x++) {
@@ -49,25 +51,27 @@ int main()
             printf("Enter Your Move : X Y Action\n");
             scanf("%d %d %c", &x_mv, &y_mv, &action);
 
-            if(action != 'q' && action != 'f' && cells[x_mv-1][y_mv-1].is_open == 0)
-                moves++;
-
             open_cell(x_mv-1, y_mv-1, action, rows, cols, (cell*)cells);
         }
+
+        int wn = check_win(rows, cols, (cell*)cells);
+
         display_board(rows, cols, (cell*)cells);
 
-        if(first_move && action != 'f') {first_move = 0;}
+        if(first_move && action != 'f' && action != 'q') {first_move = 0;}
 
         if(lost) {
             printf("\nYOU LOST THE GAME !! WOULD YOU GIVE UP ?");
             return 0;
         }
 
-        if(check_win(rows, cols, (cell*)cells)){
+        if(wn){
             win = 1;
             display_board(rows, cols, (cell*)cells);
             printf("\nDID YOU KNOW? THERE ARE MORE THAN 9999999999 PEPOLE WHO FINISHED BIGGER BOARDS IN LESS TIME THAN YOURS!!\n\nJUST KIDDING ,CONGRATULATIONS!");
+            return 0;
         }
+
 
     }
     return 0;
@@ -127,6 +131,7 @@ void display_board(int rows, int cols, cell* cells) {
                 else{
                     SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 249);
                     printf(" %d ",(cells + x*rows + y)->value);
+                    //printf("   ");
                 }
             } else if((cells + x*rows + y)->is_flagged == 1) {
                 SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 237);
@@ -165,21 +170,21 @@ void open_cell(int x, int y, char action, int rows, int cols, cell* cells) {
             (cells + x*rows + y)->is_question = 1;
             if((cells + x*rows + y)->is_flagged == 1){
                 (cells + x*rows + y)->is_flagged = 0;
-                flags--;
+                //flags--;
             }
-            questions++;
+            //questions++;
     }
     else if(action == 'q' && (cells + x*rows + y)->is_question == 1)
     {
             (cells + x*rows + y)->is_question = 0;
-            questions--;
+            //questions--;
     }
 
     if(action == 'f' && (cells + x*rows + y)->is_open == 0 && (cells + x*rows + y)->is_flagged == 0)
     {
             (cells + x*rows + y)->is_flagged = 1;
             (cells + x*rows + y)->is_question = 0;
-            flags++;
+            //flags++;
 
             for(j = -1; j <= 1; j++)
                 for(i = -1; i <= 1; i++)
@@ -190,7 +195,7 @@ void open_cell(int x, int y, char action, int rows, int cols, cell* cells) {
     else if ((action == 'f' || action == 'q') && (cells + x*rows + y)->is_flagged == 1)
     {
             (cells + x*rows + y)->is_flagged = 0;
-            flags--;
+            //flags--;
 
             for(j = -1; j <= 1; j++)
                 for(i = -1; i <= 1; i++)
@@ -211,14 +216,14 @@ void open_cell(int x, int y, char action, int rows, int cols, cell* cells) {
                                 if((cells + (x+j)*rows + y+i)->is_open != 1)
                                 {
                                     open_cell(x+j,y+i, '-',rows,cols,cells);
-                                    if((cells + (x+j)*rows + y+i)->is_flagged != 1)
-                                        old_moves++;
+                                    /*if((cells + (x+j)*rows + y+i)->is_flagged != 1)
+                                        old_moves++;*/
                                 }
             //}
         }
     }
 
-    if(old_moves != 0) {moves++;}
+    //if(old_moves != 0) {moves++;}
 
     if(action == 'f' || action == 'q' || (cells + x*rows + y)->is_flagged == 1 || (cells + x*rows + y)->is_question == 1 || (cells + x*rows + y)->is_open == 1 )
         return;
@@ -237,15 +242,31 @@ void open_cell(int x, int y, char action, int rows, int cols, cell* cells) {
 }
 
 int check_win(int rows, int cols, cell* cells) {
-    int x, y, cells_left = 0;
+    int x, y, cells_left = 0, c_flags = 0, c_questions = 0;
+
 
     for(y=0; y<rows; y++) {
         for(x=0; x<cols; x++) {
             if((cells + x*rows + y)->is_open == 0){
                 cells_left++;
             }
+            if((cells + x*rows + y)->is_flagged == 1){
+                c_flags++;
+            }
+            if((cells + x*rows + y)->is_question == 1){
+                c_questions++;
+            }
         }
     }
+    flags = c_flags;
+    questions = c_questions;
+
+
+    if(current_left_cells != cells_left) {
+        moves++;
+        current_left_cells = cells_left;
+    }
+
 
     if(cells_left == mines)
     {
