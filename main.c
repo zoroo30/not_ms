@@ -364,7 +364,6 @@ void play_game()
                 srand(time(NULL));
     printf("Enter rows & columns:\n");
     scanf("%d %d", &rows, &cols);
-    checkInt();
     PlayG(rows,cols);
               }
             }
@@ -394,14 +393,6 @@ void play_game()
         continue;
     }
 }
-}
-
-void checkInt(int rows,int cols)
-{
-
-char term;
-if(scanf("%d%d%c", &rows, &cols, &term) != 2 || term != '\n')
-    printf("failure\n"); //scan again rows & cols
 }
 
 void clrscr()
