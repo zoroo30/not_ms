@@ -1,7 +1,8 @@
 # depslib dependency file v1.0
-1512799713 source:d:\learn\c_toutorials\lab5\minesweeper\main.c
+1513929678 source:d:\learn\c_toutorials\lab5\minesweeper\main.c
 	<stdio.h>
-	<stdlib.h>
+	<strings.h>
+	<conio.h>
 	<time.h>
 	<windows.h>
 

@@ -37,6 +37,17 @@ int board_created = 0, lost = 0, win = 0, first_move = 1, moves = 0, flags = 0, 
 int main()
 {
     int i;
+    SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 11);
+
+printf(
+"\n  __   __   _______  _     _  ______   _____   _       _  ______  ______  _____    ______  _____"
+"\n (__)_(__) (_______)(_)   (_)(______) (_____) (_)  _  (_)(______)(______)(_____)  (______)(_____)"
+"\n(_) (_) (_)   (_)   (__)_ (_)(_)__   (_)___   (_) (_) (_)(_)__   (_)__   (_)__(_) (_)__   (_)__(_)"
+"\n(_) (_) (_)   (_)   (_)(_)(_)(____)    (___)_ (_) (_) (_)(____)  (____)  (_____)  (____)  (_____)"
+"\n(_)     (_) __(_)__ (_)  (__)(_)____   ____(_)(_)_(_)_(_)(_)____ (_)____ (_)      (_)____ ( ) ( )"
+"\n(_)     (_)(_______)(_)   (_)(______) (_____)  (__) (__) (______)(______)(_)      (______)(_)  (_)\n");
+
+    SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
     char str[30]="Welcome To Minesweeper !";
     char str1[30]="Are You Ready To Play ?";
     printf(" ");
@@ -59,7 +70,8 @@ int main()
     return 0;
 
     }
-    void create_board(int x, int y, int rows, int cols, cell* cells)
+
+void create_board(int x, int y, int rows, int cols, cell* cells)
 {
     int rnd_x, rnd_y, i, j;
     while(mines != 0)
