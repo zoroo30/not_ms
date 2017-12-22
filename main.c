@@ -265,6 +265,7 @@ void PlayG(int cols,int rows)
 {
     int x, y, x_mv, y_mv;
     char action;
+    char name[10],tempstr[10];
     cell cells[cols][rows];
     for(y=0; y<rows; y++) {
         for(x=0; x<cols; x++) {
@@ -294,13 +295,19 @@ void PlayG(int cols,int rows)
         if(first_move && action != 'f') {first_move = 0;}
 
         if(lost) {
-            printf("\nYOU LOST THE GAME !! WOULD YOU GIVE UP ?");
+            printf("\nYOU LOST THE GAME !\n");
+            printf("Press ' Enter ' to get back\n");
+            fflush(stdin);
+            gets(tempstr);
+            continue;
         }
 
         if(check_win(rows, cols, (cell*)cells)){
             win = 1;
             display_board(rows, cols, (cell*)cells);
-            printf("\nDID YOU KNOW? THERE ARE MORE THAN 9999999999 PEPOLE WHO FINISHED BIGGER BOARDS IN LESS TIME THAN YOURS!!\n\nJUST KIDDING ,CONGRATULATIONS!");
+            printf("Congratulations!You Won\n");
+            printf("Enter your name:\n");
+            scanf("%s",name);
         }
 
     }
@@ -310,7 +317,7 @@ void play_game()
 {
     char ch;
     char tempstr[10];
-    for(;;)
+    while(1)
     {
         system("cls");
         SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 0x12);
@@ -332,11 +339,11 @@ void play_game()
               SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 0x08);
               printf("Choose difficulty:\n");
               SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 0x03);
-              printf("(1)Easy(3x3)\n");
+              printf("(1)Easy(4x4)\n");
               SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 0x05);
               printf("(2)Medium(6x6)\n");
               SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 0x04);
-              printf("(3)Hard(9x9)\n");
+              printf("(3)Hard(8x8)\n");
               SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 0x09);
               printf("(4)Custom(mxn)\n");
               SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 0x07);
@@ -344,18 +351,15 @@ void play_game()
               ch1=getch();
               if(ch1==49)
               {
-                  PlayG(3,3);
-
+                  PlayG(4,4);
               }
               if(ch1==50)
                 {
                     PlayG(6,6);
-
                 }
               if(ch1==51)
                   {
-                      PlayG(9,9);
-
+                      PlayG(8,8);
                   }
                if(ch1==52)
               {
