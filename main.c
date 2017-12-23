@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<strings.h>
 #include<conio.h>
+#include <math.h>
 #include<time.h>
 #include <windows.h>
 
@@ -11,7 +12,9 @@
 //F9 white and blue
 
 // if you opened an open cell with right number of flags then another cell opened with the right number of flags it opens the 2nd cell surrounding cells too
-
+time_t start_t;
+time_t end_t;
+int diff_t;
 
 void delay(clock_t a)
 {
@@ -278,7 +281,7 @@ void PlayG(int cols,int rows)
     }
 
     display_board(rows, cols, (cell*)cells);
-
+    time(&start_t);
     while(!lost && !win) {
 
         if(!win){
@@ -295,8 +298,8 @@ void PlayG(int cols,int rows)
         if(first_move && action != 'f') {first_move = 0;}
 
         if(lost) {
-            printf("\nYOU LOST THE GAME !\n");
-            printf("Press ' Enter ' to get back\n");
+            printf("\nYOU LOST THE GAME !");
+            printf("\nPress ' Enter ' to get back\n");
             fflush(stdin);
             gets(tempstr);
             continue;
@@ -304,8 +307,12 @@ void PlayG(int cols,int rows)
 
         if(check_win(rows, cols, (cell*)cells)){
             win = 1;
+            time(&end_t);
             display_board(rows, cols, (cell*)cells);
             printf("Congratulations!You Won\n");
+            diff_t=difftime(end_t, start_t);
+            int score=(pow(rows,4)*pow(cols,4))/((moves)*diff_t);
+            printf("Your Score is : %d\n",score);
             printf("Enter your name:\n");
             scanf("%s",name);
         }
@@ -377,7 +384,7 @@ void play_game()
             SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 0x12);
             printf("===MINESWEEPER===\n");
             SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 0x07);
-            printf("-----------------------------------\n");
+            printf("---------------------------------\n");
             printf("  PLAYER\t\tSCORE\n");
             printf("Press ' Enter ' to get back\n");
             fflush(stdin);
