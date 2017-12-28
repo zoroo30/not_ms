@@ -80,7 +80,7 @@ void print_leaderboard()
     printf("%15s   %-6s         %-10s %s","","RANK","NAME","SCORE");
     sorting(leaders,3);
 
-    for(i=0; i<current; i++)
+    for(i=0; i<((current > 10) ? 10 : current) ; i++)
     {
         SetColorAndBackground(15,0);
         gotoxy(15,2+i);
@@ -109,12 +109,8 @@ void search_n_replace(leaderboard x)
     int i;
     for(i=0; i<current; i++)
     {
-
         if(strcmp(leaders[i].player,x.player)== 0)
-            if(leaders[i].score < x.score )
-            {
-                leaders[i].score = x.score;
-            }
+            leaders[i].score += x.score;
     }
     duplicate();
 }

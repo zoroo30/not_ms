@@ -7,4 +7,5 @@ typedef struct
     int score;
 } leaderboard;
 
+extern leaderboard leaders[10];
 #endif // LEADERBOARD_H_INCLUDED

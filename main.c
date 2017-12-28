@@ -15,7 +15,7 @@
 // if you opened an open cell with right number of flags then another cell opened with the right number of flags it opens the 2nd cell surrounding cells too
 time_t start_t;
 time_t end_t;
-int diff_t;
+
 
 void delay(clock_t a)
 {
@@ -36,23 +36,30 @@ typedef struct
     int is_question;
 } cell;
 
-int board_created = 0, lost = 0, win = 0, first_move = 1, moves = 0, current_left_cells = 0, flags = 0, questions = 0, mines = 0;
+int board_created = 0, lost = 0, win = 0, first_move = 1, moves = 0, current_left_cells = 0, flags = 0, questions = 0, mines = 0, timer_start = 0, diff_t = 0, prev_diff_t = 0;
 
 
 int main()
 {
+    from_file(leaders,"scores.dat");
     int i;
     SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 11);
 
-    printf(
-        "\n  __   __   _______  _     _  ______   _____   _       _  ______  ______  _____    ______  _____"
-        "\n (__)_(__) (_______)(_)   (_)(______) (_____) (_)  _  (_)(______)(______)(_____)  (______)(_____)"
-        "\n(_) (_) (_)   (_)   (__)_ (_)(_)__   (_)___   (_) (_) (_)(_)__   (_)__   (_)__(_) (_)__   (_)__(_)"
-        "\n(_) (_) (_)   (_)   (_)(_)(_)(____)    (___)_ (_) (_) (_)(____)  (____)  (_____)  (____)  (_____)"
-        "\n(_)     (_) __(_)__ (_)  (__)(_)____   ____(_)(_)_(_)_(_)(_)____ (_)____ (_)      (_)____ ( ) ( )"
-        "\n(_)     (_)(_______)(_)   (_)(______) (_____)  (__) (__) (______)(______)(_)      (______)(_)  (_)\n");
+     printf("888b     d888 d8b                    .d8888b."
+            "\n8888b   d8888 Y8P                   d88P  Y88b"
+            "\n88888b.d88888                       Y88b."
+            "\n888Y88888P888 888 88888b.   .d88b.   \"Y888b.   888  888  888  .d88b.   .d88b.  88888b.   .d88b.  888d888"
+            "\n888 Y888P 888 888 888 \"88b d8P  Y8b     \"Y88b. 888  888  888 d8P  Y8b d8P  Y8b 888 \"88b d8P  Y8b 888P\""
+            "\n888  Y8P  888 888 888  888 88888888       \"888 888  888  888 88888888 88888888 888  888 88888888 888"
+            "\n888   \"   888 888 888  888 Y8b.     Y88b  d88P Y88b 888 d88P Y8b.     Y8b.     888 d88P Y8b.     888"
+            "\n888       888 888 888  888  \"Y8888   \"Y8888P\"   \"Y8888888P\"   \"Y8888   \"Y8888  88888P\"   \"Y8888  888"
+            "\n                                                                               888"
+            "\n                                                                               888"
+            "\n                                                                               888\n   ");
 
     SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 7);
+
+    //char title[600] = "\n  __   __   _______  _     _  ______   _____   _       _  ______  ______  _____    ______  _____\n (__)_(__) (_______)(_)   (_)(______) (_____) (_)  _  (_)(______)(______)(_____)  (______)(_____)\n(_) (_) (_)   (_)   (__)_ (_)(_)__   (_)___   (_) (_) (_)(_)__   (_)__   (_)__(_) (_)__   (_)__(_)\n(_) (_) (_)   (_)   (_)(_)(_)(____)    (___)_ (_) (_) (_)(____)  (____)  (_____)  (____)  (_____)\n(_)     (_) __(_)__ (_)  (__)(_)____   ____(_)(_)_(_)_(_)(_)____ (_)____ (_)      (_)____ ( ) ( )\n(_)     (_)(_______)(_)   (_)(______) (_____)  (__) (__) (______)(______)(_)      (______)(_)  (_)\n";
     char str[30]="Welcome To Minesweeper !";
     char str1[30]="Are You Ready To Play ?";
     printf(" ");
@@ -68,7 +75,11 @@ int main()
         printf("%c",str1[i]);
         delay(60);
     }
-    delay(1500);
+    char tempstr[10];
+    printf("\nPress ' Enter ' to continue\n");
+    fflush(stdin);
+    gets(tempstr);
+
     system("cls");
     play_game();
 
@@ -112,7 +123,12 @@ void display_board(int rows, int cols, cell* cells)
     clrscr();
 
     mines = 1+(cols*rows)/10;
-    printf("moves : %d;  F : %d;  ? : %d;  mines : %d; \n\n", moves, flags, questions, mines);
+    if(timer_start){
+        time(&end_t);
+        diff_t=difftime(end_t+prev_diff_t, start_t);
+    }
+
+    printf("moves : %d;  F : %d;  ? : %d;  mines : %d; timer : %02d:%02d\n\n", moves, flags, questions, mines,mintues(),seconds());
 
     for(y=0; y<rows; y++)
     {
@@ -120,12 +136,20 @@ void display_board(int rows, int cols, cell* cells)
         printf("%2d ",y+1);
         for(x=0; x<cols; x++)
         {
-            if((cells + x*rows + y)->is_open == 1)
+
+
+            if(lost && (cells + x*rows + y)->value == 9 && (cells + x*rows + y)->is_open == 0 && (cells + x*rows + y)->is_flagged == 0)
+            {
+                SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 12);
+                printf(" M ");
+            }
+            else if((cells + x*rows + y)->is_open == 1)
             {
                 if((cells + x*rows + y)->value == 9)
                 {
-                    if(!win)
+                    if(!win){
                         SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_RED);
+                    }
                     else
                         SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 047);
                     printf(" * ");
@@ -144,7 +168,10 @@ void display_board(int rows, int cols, cell* cells)
             else if((cells + x*rows + y)->is_flagged == 1)
             {
                 SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), 237);
-                printf(" F ");
+                if(lost && (cells + x*rows + y)->is_flagged != 9)
+                    printf(" - ");
+                else
+                    printf(" F ");
             }
             else if((cells + x*rows + y)->is_question == 1)
             {
@@ -156,6 +183,7 @@ void display_board(int rows, int cols, cell* cells)
                 SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_BLUE);
                 printf(" X ");
             }
+
         }
         printf("\n");
     }
@@ -308,7 +336,7 @@ int check_win(int rows, int cols, cell* cells)
 void newGameSettings(int rows, int cols,cell* cells)
 {
     int y,x;
-    board_created = 0, lost = 0, win = 0, first_move = 1, moves = 0, current_left_cells = 0, flags = 0, questions = 0, mines = 0;
+    board_created = 0, lost = 0, win = 0, first_move = 1, moves = 0, current_left_cells = 0, flags = 0, questions = 0, mines = 0, timer_start = 0, diff_t = 0, prev_diff_t = 0;
     for(y=0; y<rows; y++)
     {
         for(x=0; x<cols; x++)
@@ -325,7 +353,7 @@ void newGameSettings(int rows, int cols,cell* cells)
 void PlayG(int cols,int rows,int is_load)
 {
 
-    int x, y, x_mv, y_mv, input_exist, valid_input;
+    int x, y, x_mv, y_mv, input_exist = 1, valid_input = 1;
     char action;
     char name[10],tempstr[10],buffer[15]="";
     int save_success = 0;
@@ -336,15 +364,18 @@ void PlayG(int cols,int rows,int is_load)
     cell cells[cols][rows];
 
     if(is_load)
+    {
         loadArray((cell*)cells,rows,cols);
+    }
     else{
         newGameSettings(rows,cols,(cell*)cells);
         current_left_cells = cols*rows;
     }
 
-
     display_board(rows, cols, (cell*)cells);
-    time(&start_t);
+
+
+
     while(!lost && !win)
     {
 
@@ -354,6 +385,8 @@ void PlayG(int cols,int rows,int is_load)
 
             if(!input_exist || !valid_input)
             {
+                input_exist = 1;
+                valid_input = 1;
                 display_board(rows, cols, (cell*)cells);
                 if(save_success == 1)
                 {
@@ -375,8 +408,17 @@ void PlayG(int cols,int rows,int is_load)
 
                     /*if(action != 'q' && action != 'f' && cells[x_mv-1][y_mv-1].is_open == 0)
                         moves++moves++;*/
-
-                    open_cell(x_mv-1, y_mv-1, action, rows, cols, (cell*)cells);
+                    if(!(x_mv < 1 || x_mv > cols || y_mv < 1 || y_mv > rows)){
+                        open_cell(x_mv-1, y_mv-1, action, rows, cols, (cell*)cells);
+                        if(!timer_start){
+                            time(&start_t);
+                            timer_start = 1;
+                            diff_t=difftime(end_t+prev_diff_t, start_t);
+                        }
+                    } else {
+                        valid_input = 0;
+                        continue;
+                    }
                 }
                 else
                 {
@@ -386,6 +428,8 @@ void PlayG(int cols,int rows,int is_load)
                     }
                     else if(strcmp(buffer,"save") == 0)
                     {
+                        time(&end_t);
+                        diff_t=difftime(end_t+prev_diff_t, start_t);
                         save_success = 1;
                         saveData((cell*)cells,rows,cols);
                     }
@@ -404,6 +448,7 @@ void PlayG(int cols,int rows,int is_load)
 
         if(lost)
         {
+            display_board(rows,cols,(cell*)cells);
             printf("\nYOU LOST THE GAME !");
             printf("\nPress ' Enter ' to get back\n");
             fflush(stdin);
@@ -417,7 +462,7 @@ void PlayG(int cols,int rows,int is_load)
             time(&end_t);
             display_board(rows, cols, (cell*)cells);
             printf("Congratulations!You Won\n");
-            diff_t=difftime(end_t, start_t);
+            diff_t=difftime(end_t+prev_diff_t, start_t);
             leaderboard winner;
             winner.score=(pow(rows,4)*pow(cols,4))/((moves)*diff_t);
             printf("Your Score is : %d\n",winner.score);
@@ -491,7 +536,7 @@ void play_game()
                         printf("Enter a VALID board!\n");
                     }
 
-                    printf("Enter rows & columns:\n");
+                    printf("Enter rows(4 - 30) & columns(4 - 24):\n");
                     input_exist = input(buffer,15,1);
                     if(input_exist)
                     {
@@ -499,8 +544,13 @@ void play_game()
                         if(valid_input)
                         {
                             sscanf(buffer,"%d %d", &rows, &cols);
-                            PlayG(rows,cols,0);
-                            break;
+                            if(!(rows < 4 || cols < 4 || rows > 30 || cols > 24)) {
+                                PlayG(rows,cols,0);
+                                break;
+                            } else {
+                                valid_input = 0;
+                                continue;
+                            }
                         }
                         else continue;
                     }
@@ -615,7 +665,7 @@ void saveData(cell* cells,int rows,int cols)
 
     if(f1!=NULL)
     {
-        fprintf(f1,"%d %d %d %d %d %d %d %d %d %d %d\n",board_created, lost, win, first_move, moves, flags, questions, mines,rows,cols,current_left_cells);
+        fprintf(f1,"%d %d %d %d %d %d %d %d %d %d %d %d\n",board_created, lost, win, first_move, moves, flags, questions, mines,rows,cols,current_left_cells,diff_t);
 
         fclose(f1);
         f1=fopen("savedata.txt","a");
@@ -639,10 +689,12 @@ void loadMainSettings(int* rows,int* cols)
 
     if(f2!=NULL)
     {
-        fscanf(f2,"%d %d %d %d %d %d %d %d %d %d %d\n",&board_created, &lost, &win, &first_move, &moves, &flags, &questions, &mines,rows,cols,&current_left_cells);
+        fscanf(f2,"%d %d %d %d %d %d %d %d %d %d %d %d\n",&board_created, &lost, &win, &first_move, &moves, &flags, &questions, &mines,rows,cols,&current_left_cells,&diff_t);
     }
     fclose(f2);
 
+    prev_diff_t = diff_t;
+    timer_start = 0;
 }
 
 
@@ -654,7 +706,7 @@ void loadArray(cell* cells,int rows,int cols)
 
     if(f2!=NULL)
     {
-        fscanf(f2,"%d %d %d %d %d %d %d %d %d %d %d\n",&board_created, &lost, &win, &first_move, &moves, &flags, &questions, &mines,&rows,&cols,&current_left_cells);
+        fscanf(f2,"%d %d %d %d %d %d %d %d %d %d %d %d\n",&board_created, &lost, &win, &first_move, &moves, &flags, &questions, &mines,&rows,&cols,&current_left_cells,&diff_t);
         for(y=0; y<rows; y++)
         {
             for(x=0; x<cols; x++)
@@ -665,4 +717,13 @@ void loadArray(cell* cells,int rows,int cols)
     }
     fclose(f2);
 
+}
+
+int seconds() {
+    int mins = diff_t/60;
+    return diff_t - (mins*60);
+}
+
+int mintues() {
+    return diff_t/60;
 }
