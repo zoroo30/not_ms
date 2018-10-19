@@ -1,1 +1,1 @@
-# not_ms
+# not_minesweeper
